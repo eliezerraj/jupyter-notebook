@@ -30,8 +30,6 @@ if __name__ == "__main__":
     g = graph.traversal().withRemote(connection)
     
 
-
-
     #print(g.V(1).valueMap().toList())
     #print(g.V(10001).valueMap().toList())
 

@@ -13,13 +13,13 @@ FROM (select distinct(mcc) as id from payment p ) t
 ## Terminal
 SELECT json_agg(
            json_build_object(
-               'id', id,
+               'id', terminal_name,
                'label','terminal',
-               'properties',json_build_object(	'id', id,
+               'properties',json_build_object(	'id', terminal_name,
                									'name', terminal_name,
                									'status', status,
                									'coord_x',coord_x,
-               									'coord_y',coord_x)
+               									'coord_y',coord_y)
            )
        ) AS result
 FROM terminal t 
@@ -27,10 +27,11 @@ FROM terminal t
 ## Person
 SELECT json_agg(
            json_build_object(
-               'id', id,
+               'id', person_id,
                'label','person',
-               'properties',json_build_object(	'id', id,
+               'properties',json_build_object(	'id', person_id,
                									'name', person_name,
+               									'person_id', person_id,
                									'age', age,
                									'profession',profession,
                									'education_level',education_level)
@@ -41,9 +42,9 @@ FROM person
 ## Account
 SELECT json_agg(
            json_build_object(
-               'id', id,
+               'id', account_id,
                'label','account',
-               'properties',json_build_object(	'id', id,
+               'properties',json_build_object(	'id', account_id,
                									'name', account_id,
                									'person', person_id)
            )
@@ -53,9 +54,9 @@ FROM account a
 ## Card
 SELECT json_agg(
            json_build_object(
-               'id', id,
+               'id', card_number,
                'label','card',
-               'properties',json_build_object(	'id', id,
+               'properties',json_build_object(	'id', card_number,
                									'card_number', card_number,
                									'account', account_id,
                									'type', card_type,
@@ -76,9 +77,9 @@ FROM (select 	c.id,
 ## Account
 SELECT json_agg(
            json_build_object(
-               'id', id,
+               'id', account_id,
                'label','account',
-               'properties',json_build_object(	'id', id,
+               'properties',json_build_object(	'id', account_id,
                									'name', account_id,
                									'person', person_id)
            )
@@ -113,28 +114,9 @@ FROM (select 	p.id,
 		where	p.fk_terminal_id = t.id
 		and 	p.fk_card_id = c.id ) a 
 
-select 	p.id,
-		p.currency, 
-		p.amount,
-		p.card_type,
-		p.card_model,
-		p.payment_at,
-		p.mcc, 
-		t.terminal_name,
-		c.card_number 
-from 	payment p,
-		terminal t,
-		card c 
-where	p.fk_terminal_id = t.id
-and 	p.fk_card_id = c.id 
-
-
-select *
-from payment p 
-
 ========================================================
 		
-## Edge Account / Person
+## Edge Person / Account
 SELECT json_agg(
            json_build_object(
                'from_id', person_id,
@@ -212,12 +194,12 @@ FROM (select 	p.id,
 		where	p.fk_terminal_id = t.id
 		and 	p.fk_card_id = c.id ) a 
 	
-## Edge Payment / MCC
+## Edge Payment / Terminal
 SELECT json_agg(
            json_build_object(
                'from_id', id,
                'to_id', terminal_name,
-               'label','payed_at',
+               'label','used_at',
                'properties',json_build_object('id', id || '-' || terminal_name || '-PAY-TERMINAL')
            )
        ) AS result
